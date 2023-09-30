@@ -1,5 +1,7 @@
 package com.odeyalo.sonata.miku.controller;
 
+import com.odeyalo.sonata.miku.dto.ArtistDto;
+import com.odeyalo.sonata.miku.dto.ArtistsDto;
 import com.odeyalo.sonata.miku.dto.TrackDto;
 import com.odeyalo.sonata.miku.entity.TrackEntity;
 import com.odeyalo.sonata.miku.repository.TrackRepository;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/track")
@@ -34,10 +38,12 @@ public class TrackController {
     }
 
     private static TrackDto toDto(TrackEntity track) {
+        List<ArtistDto> dtos = track.getArtists().stream().map(entity -> ArtistDto.of(entity.getPublicId(), entity.getName())).toList();
         return TrackDto.builder()
                 .id(track.getPublicId())
                 .name(track.getName())
                 .durationMs(track.getDurationMs())
+                .artists(ArtistsDto.multiple(dtos))
                 .build();
     }
 }
