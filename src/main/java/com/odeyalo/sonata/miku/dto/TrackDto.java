@@ -17,4 +17,6 @@ public class TrackDto {
     String name;
     @JsonProperty("duration_ms")
     Long durationMs;
+    @JsonProperty("artists")
+    ArtistsDto artists;
 }
