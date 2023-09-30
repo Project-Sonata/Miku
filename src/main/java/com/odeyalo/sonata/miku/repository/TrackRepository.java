@@ -7,19 +7,12 @@ import reactor.core.publisher.Mono;
 /**
  * Basic repository to work with tracks that does not depend on any framework or library.
  */
-public interface TrackRepository {
-
-    <S extends TrackEntity> Mono<S> save(S entity);
-
-    Mono<TrackEntity> findById(Long id);
+public interface TrackRepository extends BaseRepository<TrackEntity, Long> {
 
     Mono<TrackEntity> findByPublicId(String publicId);
 
     Flux<TrackEntity> findAllByPublicIdIsIn(String... ids);
 
-    Mono<Void> deleteById(Long id);
-
     Mono<Void> deleteByPublicId(String id);
 
-    Mono<Void> deleteAll();
 }

@@ -1,7 +1,10 @@
 package com.odeyalo.sonata.miku.api;
 
 import com.odeyalo.sonata.miku.dto.TrackDto;
+import com.odeyalo.sonata.miku.entity.ArtistEntity;
 import com.odeyalo.sonata.miku.entity.TrackEntity;
+import com.odeyalo.sonata.miku.repository.ArtistRepository;
+import com.odeyalo.sonata.miku.repository.TrackArtistRepository;
 import com.odeyalo.sonata.miku.repository.TrackRepository;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
@@ -28,6 +31,19 @@ public class FetchTrackByIdEndpointTest {
     @Autowired
     TrackRepository trackRepository;
 
+    @Autowired
+    ArtistRepository artistRepository;
+
+    @Autowired
+    TrackArtistRepository trackArtistRepository;
+
+    @AfterEach
+    void tearDown() {
+        trackArtistRepository.deleteAll().block();
+        trackRepository.deleteAll().block();
+        artistRepository.deleteAll().block();
+    }
+
     @Nested
     @TestInstance(Lifecycle.PER_CLASS)
     class FetchExistingTrack {
@@ -36,18 +52,19 @@ public class FetchTrackByIdEndpointTest {
 
         @BeforeEach
         void setUp() {
-            TrackEntity track = TrackEntity.builder()
+            ArtistEntity artist = artistRepository.save(ArtistEntity.builder()
+                    .publicId("artistid")
+                    .name("Bones")
+                    .build()).block();
+
+            var track = TrackEntity.builder()
                     .publicId(TRACK_ID)
                     .name("U know it's understood")
                     .durationMs(10000L)
+                    .artist(artist)
                     .build();
 
             existingTrack = trackRepository.save(track).block();
-        }
-
-        @AfterEach
-        void tearDown() {
-            trackRepository.deleteAll().block();
         }
 
         @Test
@@ -98,6 +115,15 @@ public class FetchTrackByIdEndpointTest {
             TrackDto responseBody = responseSpec.expectBody(TrackDto.class).returnResult().getResponseBody();
 
             TrackDtoAssert.forTrack(responseBody).duration().isEqualTo(existingTrack.getDurationMs());
+        }
+
+        @Test
+        void shouldReturnTrackArtists() {
+            WebTestClient.ResponseSpec responseSpec = fetchTrack();
+
+            TrackDto responseBody = responseSpec.expectBody(TrackDto.class).returnResult().getResponseBody();
+
+            TrackDtoAssert.forTrack(responseBody).artists().length(1);
         }
 
         private WebTestClient.ResponseSpec fetchTrack() {
