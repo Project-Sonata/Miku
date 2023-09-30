@@ -26,6 +26,10 @@ public class TrackDtoAssert extends AbstractAssert<TrackDtoAssert, TrackDto> {
         return new TrackDurationAssert(actual.getDurationMs());
     }
 
+    public ArtistsDtoAssert artists() {
+        return new ArtistsDtoAssert(actual.getArtists());
+    }
+
     public static final class TrackNameAssert extends AbstractStringAssert<TrackNameAssert> {
         private final TrackDtoAssert parent;
 
