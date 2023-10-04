@@ -38,6 +38,7 @@ public class AlbumController {
                         .name(album.getName())
                         .albumType(album.getAlbumType())
                         .build())
-                .map(HttpStatuses::ok);
+                .map(HttpStatuses::ok)
+                .defaultIfEmpty(HttpStatuses.unprocessableEntity());
     }
 }
