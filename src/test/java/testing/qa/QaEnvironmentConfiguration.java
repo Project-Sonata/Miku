@@ -5,10 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import testing.qa.operations.DelegatingQaOperations;
-import testing.qa.operations.QaOperations;
-import testing.qa.operations.TrackOperations;
-import testing.qa.operations.WebTestClientTrackOperations;
+import testing.qa.operations.*;
 
 /**
  * Configuration to bootstrap QA environment beans
@@ -24,7 +21,13 @@ public class QaEnvironmentConfiguration {
     }
 
     @Bean
-    public QaOperations qaOperations(TrackOperations trackOperations) {
-        return new DelegatingQaOperations(trackOperations);
+    @ConditionalOnMissingBean
+    public AlbumOperations albumOperations(WebTestClient webTestClient) {
+        return new WebTestCleintAlbumOperations(webTestClient);
+    }
+
+    @Bean
+    public QaOperations qaOperations(TrackOperations trackOperations, AlbumOperations albumOperations) {
+        return new DelegatingQaOperations(trackOperations, albumOperations);
     }
 }

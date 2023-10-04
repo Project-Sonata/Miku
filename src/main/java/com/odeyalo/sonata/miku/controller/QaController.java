@@ -41,6 +41,21 @@ public class QaController {
                                 .then(artistRepository.deleteAll())));
     }
 
+    @PostMapping("/album/simplified/")
+    public Mono<SimplifiedAlbumEntity> saveAlbum(@RequestBody SimplifiedAlbumEntity album) {
+        return albumRepository.save(album);
+    }
+
+    @DeleteMapping("/album/simplified/")
+    public Mono<Void> clearAlbums() {
+        return trackArtistRepository.deleteAll()
+                .then(trackRepository.deleteAll()
+                        .then(albumRepository.deleteAll()
+                                .then(artistRepository.deleteAll())));
+    }
+
+
+
     private Mono<TrackEntity> saveTrack(@NotNull TrackEntity track, SimplifiedAlbumEntity albumEntity) {
         track.setAlbum(albumEntity);
         track.setAlbumId(albumEntity.getId());

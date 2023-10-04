@@ -2,6 +2,7 @@ package com.odeyalo.sonata.miku.controller;
 
 import com.odeyalo.sonata.miku.dto.ArtistDto;
 import com.odeyalo.sonata.miku.dto.ArtistsDto;
+import com.odeyalo.sonata.miku.dto.SimplifiedAlbumInfoDto;
 import com.odeyalo.sonata.miku.dto.TrackDto;
 import com.odeyalo.sonata.miku.entity.TrackEntity;
 import com.odeyalo.sonata.miku.repository.TrackRepository;
@@ -44,6 +45,14 @@ public class TrackController {
                 .name(track.getName())
                 .durationMs(track.getDurationMs())
                 .artists(ArtistsDto.multiple(dtos))
+                .albumInfo(toAlbumDto(track))
+                .build();
+    }
+
+    private static SimplifiedAlbumInfoDto toAlbumDto(TrackEntity track) {
+        return SimplifiedAlbumInfoDto.builder()
+                .id(track.getAlbum().getPublicId())
+                .name(track.getAlbum().getName())
                 .build();
     }
 }

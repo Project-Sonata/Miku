@@ -7,4 +7,5 @@ public interface QaOperations {
 
     TrackOperations tracks();
 
+    AlbumOperations albums();
 }

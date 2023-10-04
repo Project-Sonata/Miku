@@ -107,6 +107,35 @@ public class FetchTrackByIdEndpointTest {
             TrackDtoAssert.forTrack(responseBody).artists().length(1);
         }
 
+        @Test
+        void shouldReturnAlbumObject() {
+            WebTestClient.ResponseSpec responseSpec = fetchTrack();
+
+            TrackDto responseBody = responseSpec.expectBody(TrackDto.class).returnResult().getResponseBody();
+
+            TrackDtoAssert.forTrack(responseBody).album().isNotNull();
+        }
+
+        @Test
+        void shouldReturnAlbumId() {
+            WebTestClient.ResponseSpec responseSpec = fetchTrack();
+
+            TrackDto responseBody = responseSpec.expectBody(TrackDto.class).returnResult().getResponseBody();
+
+            TrackDtoAssert.forTrack(responseBody).album().id().isEqualTo(existingTrack.getAlbum().getPublicId());
+        }
+
+        @Test
+        void shouldReturnAlbumName() {
+            WebTestClient.ResponseSpec responseSpec = fetchTrack();
+
+            TrackDto responseBody = responseSpec.expectBody(TrackDto.class).returnResult().getResponseBody();
+
+            TrackDtoAssert.forTrack(responseBody).album().name().isEqualTo(existingTrack.getAlbum().getName());
+        }
+
+
+
         private WebTestClient.ResponseSpec fetchTrack() {
             return sendRequest(TRACK_ID);
         }
