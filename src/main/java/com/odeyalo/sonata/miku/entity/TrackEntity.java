@@ -27,6 +27,10 @@ public class TrackEntity {
     String name;
     @Column("duration_ms")
     Long durationMs;
+    @Column("album_id")
+    Long albumId;
+    @Transient
+    SimplifiedAlbumEntity album;
     @Singular
     @Transient
     List<ArtistEntity> artists;
