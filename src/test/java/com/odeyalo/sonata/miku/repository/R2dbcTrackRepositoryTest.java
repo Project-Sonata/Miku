@@ -1,10 +1,6 @@
 package com.odeyalo.sonata.miku.repository;
 
-import com.odeyalo.sonata.miku.entity.ArtistEntity;
-import com.odeyalo.sonata.miku.entity.SimplifiedAlbumEntity;
 import com.odeyalo.sonata.miku.entity.TrackEntity;
-import com.odeyalo.sonata.miku.model.AlbumType;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +15,6 @@ import testing.sql.SqlScriptRunnerTestExecutionListener;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Tests for R2dbcTrackRepository
@@ -88,7 +83,6 @@ class R2dbcTrackRepositoryTest {
 
     @Test
     @SqlScript(afterTestExecutionLocations = "./sql/clearTracksAndArtists.sql")
-    @Disabled
     void shouldDeleteByPublicId() {
         var firstTrack = TrackEntityFaker.create().get();
         var secondTrack = TrackEntityFaker.create().get();
@@ -99,7 +93,7 @@ class R2dbcTrackRepositoryTest {
                 .as(StepVerifier::create)
                 .verifyComplete();
 
-        r2dbcTrackRepository.findAll()
+        r2dbcTrackRepository.findAllByPublicIdIsIn(firstTrack.getPublicId(), secondTrack.getPublicId())
                 .as(StepVerifier::create)
                 .expectNextMatches(track -> track.getId().longValue() == firstTrack.getId().longValue())
                 .verifyComplete();
