@@ -8,9 +8,10 @@ import reactor.core.publisher.Flux;
  * Repository to work with TrackArtistEntity
  */
 @Repository
-public interface TrackArtistRepository extends BaseRepository<TrackArtistEntity, Long> {
+public interface TrackArtistRepository extends BaseRepository<TrackArtistEntity, Long>, TrackArtistRemoveCapable {
 
     Flux<TrackArtistEntity> findAllByTrackId(Long trackId);
 
     Flux<TrackArtistEntity> findAllByArtistId(Long artistId);
+
 }
