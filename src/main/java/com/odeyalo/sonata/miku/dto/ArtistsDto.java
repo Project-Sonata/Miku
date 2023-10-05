@@ -3,9 +3,11 @@ package com.odeyalo.sonata.miku.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -16,8 +18,9 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ArtistsDto {
+public class ArtistsDto implements Iterable<ArtistDto> {
     @JsonProperty("items")
+    @Getter(value = AccessLevel.NONE)
     List<ArtistDto> artists;
 
     public static ArtistsDto empty() {
@@ -31,5 +34,19 @@ public class ArtistsDto {
 
     public int size() {
         return artists.size();
+    }
+
+    public boolean isEmpty() {
+        return artists.isEmpty();
+    }
+
+    public ArtistDto get(int index) {
+        return artists.get(index);
+    }
+
+    @NotNull
+    @Override
+    public Iterator<ArtistDto> iterator() {
+        return artists.iterator();
     }
 }
