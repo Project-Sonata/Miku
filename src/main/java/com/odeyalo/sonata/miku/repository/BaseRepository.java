@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
  * @param <T>  - entity type
  * @param <ID> - id of the entity
  */
-public interface BaseRepository<T, ID> {
+public interface BaseRepository<T, ID> extends RemoveCapable<T> {
 
     <S extends T> Mono<S> save(S entity);
 
@@ -23,9 +23,4 @@ public interface BaseRepository<T, ID> {
     Flux<T> findAllById(Iterable<ID> ids);
 
     Flux<T> findAllById(Publisher<ID> ids);
-
-    Mono<Void> deleteById(Long id);
-
-    Mono<Void> deleteAll();
-
 }
