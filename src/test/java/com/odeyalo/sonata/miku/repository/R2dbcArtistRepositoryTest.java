@@ -1,12 +1,16 @@
 package com.odeyalo.sonata.miku.repository;
 
 import com.odeyalo.sonata.miku.entity.ArtistEntity;
+import com.odeyalo.sonata.miku.repository.support.delegate.R2dbcArtistRepositoryDelegate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import reactor.test.StepVerifier;
 
@@ -15,7 +19,9 @@ import java.util.Arrays;
 @DataR2dbcTest
 @TestInstance(Lifecycle.PER_METHOD)
 @ActiveProfiles("test")
+@Import(R2dbcArtistRepositoryTest.R2dbcArtistRepositoryTestConfiguration.class)
 class R2dbcArtistRepositoryTest {
+
     @Autowired
     R2dbcArtistRepository r2dbcArtistRepository;
 
@@ -62,5 +68,14 @@ class R2dbcArtistRepositoryTest {
                 .as(StepVerifier::create)
                 .expectNextCount(entities.length)
                 .verifyComplete();
+    }
+
+    @TestConfiguration
+    public static class R2dbcArtistRepositoryTestConfiguration {
+
+        @Bean
+        public R2dbcArtistRepository r2dbcArtistRepository(R2dbcArtistRepositoryDelegate delegate) {
+            return new R2dbcArtistRepository(delegate);
+        }
     }
 }
