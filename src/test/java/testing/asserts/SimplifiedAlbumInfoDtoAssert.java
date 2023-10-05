@@ -1,7 +1,6 @@
 package testing.asserts;
 
 import com.odeyalo.sonata.miku.dto.SimplifiedAlbumInfoDto;
-import com.odeyalo.sonata.miku.entity.SimplifiedAlbumEntity;
 import org.assertj.core.api.AbstractAssert;
 
 public class SimplifiedAlbumInfoDtoAssert extends AbstractAssert<SimplifiedAlbumInfoDtoAssert, SimplifiedAlbumInfoDto> {
@@ -10,13 +9,8 @@ public class SimplifiedAlbumInfoDtoAssert extends AbstractAssert<SimplifiedAlbum
         super(actual, SimplifiedAlbumInfoDtoAssert.class);
     }
 
-    protected SimplifiedAlbumInfoDtoAssert(SimplifiedAlbumInfoDto actual, Class<?> self) {
-        super(actual, self);
-    }
-
-
-    public static SimplifiedAlbumEntityAssert fromBody(SimplifiedAlbumEntity actual) {
-        return new SimplifiedAlbumEntityAssert(actual);
+    public static SimplifiedAlbumInfoDtoAssert fromBody(SimplifiedAlbumInfoDto actual) {
+        return new SimplifiedAlbumInfoDtoAssert(actual);
     }
 
     public IdAssert id() {

@@ -3,6 +3,7 @@ package com.odeyalo.sonata.miku.controller;
 
 import com.odeyalo.sonata.miku.dto.AlbumDto;
 import com.odeyalo.sonata.miku.repository.SimplifiedAlbumRepository;
+import com.odeyalo.sonata.miku.support.converter.AlbumDtoConverter;
 import com.odeyalo.sonata.miku.support.web.HttpStatuses;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,19 +18,17 @@ import reactor.core.publisher.Mono;
 public class AlbumController {
 
     private final SimplifiedAlbumRepository simplifiedAlbumRepository;
+    private final AlbumDtoConverter albumDtoConverter;
 
-    public AlbumController(SimplifiedAlbumRepository simplifiedAlbumRepository) {
+    public AlbumController(SimplifiedAlbumRepository simplifiedAlbumRepository, AlbumDtoConverter albumDtoConverter) {
         this.simplifiedAlbumRepository = simplifiedAlbumRepository;
+        this.albumDtoConverter = albumDtoConverter;
     }
 
     @GetMapping(value = "/{albumId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AlbumDto>> fetchAlbumById(@PathVariable String albumId) {
         return simplifiedAlbumRepository.findByPublicId(albumId)
-                .map(album -> AlbumDto.builder()
-                        .id(albumId)
-                        .name(album.getName())
-                        .albumType(album.getAlbumType())
-                        .build())
+                .map(albumDtoConverter::toAlbumDto)
                 .map(HttpStatuses::ok)
                 .defaultIfEmpty(HttpStatuses.unprocessableEntity());
     }
