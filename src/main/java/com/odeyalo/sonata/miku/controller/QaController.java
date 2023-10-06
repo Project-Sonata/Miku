@@ -1,11 +1,9 @@
 package com.odeyalo.sonata.miku.controller;
 
+import com.odeyalo.sonata.miku.entity.AlbumEntity;
 import com.odeyalo.sonata.miku.entity.SimplifiedAlbumEntity;
 import com.odeyalo.sonata.miku.entity.TrackEntity;
-import com.odeyalo.sonata.miku.repository.ArtistRepository;
-import com.odeyalo.sonata.miku.repository.SimplifiedAlbumRepository;
-import com.odeyalo.sonata.miku.repository.TrackArtistRepository;
-import com.odeyalo.sonata.miku.repository.TrackRepository;
+import com.odeyalo.sonata.miku.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Profile;
@@ -23,13 +21,14 @@ public class QaController {
     private final TrackRepository trackRepository;
     private final ArtistRepository artistRepository;
     private final TrackArtistRepository trackArtistRepository;
-    private final SimplifiedAlbumRepository albumRepository;
+    private final SimplifiedAlbumRepository simplifiedAlbumRepository;
+    private final AlbumRepository albumRepository;
 
     @PostMapping("/track")
     public Mono<TrackEntity> saveTrack(@RequestBody TrackEntity track) {
         return artistRepository.saveAll(track.getArtists()).collectList()
                 .doOnNext(track::setArtists)
-                .flatMap(artistEntities -> albumRepository.save(track.getAlbum()))
+                .flatMap(artistEntities -> simplifiedAlbumRepository.save(track.getAlbum()))
                 .flatMap(album -> saveTrack(track, album));
     }
 
@@ -37,24 +36,27 @@ public class QaController {
     public Mono<Void> clearTracks() {
         return trackArtistRepository.deleteAll()
                 .then(trackRepository.deleteAll()
-                        .then(albumRepository.deleteAll()
+                        .then(simplifiedAlbumRepository.deleteAll()
                                 .then(artistRepository.deleteAll())));
     }
 
     @PostMapping("/album/simplified/")
-    public Mono<SimplifiedAlbumEntity> saveAlbum(@RequestBody SimplifiedAlbumEntity album) {
+    public Mono<SimplifiedAlbumEntity> saveSimplifiedAlbum(@RequestBody SimplifiedAlbumEntity album) {
+        return simplifiedAlbumRepository.save(album);
+    }
+
+    @PostMapping("/album/")
+    public Mono<AlbumEntity> saveAlbum(@RequestBody AlbumEntity album) {
         return albumRepository.save(album);
     }
 
-    @DeleteMapping("/album/simplified/")
+    @DeleteMapping("/album/clear")
     public Mono<Void> clearAlbums() {
         return trackArtistRepository.deleteAll()
                 .then(trackRepository.deleteAll()
-                        .then(albumRepository.deleteAll()
-                                .then(artistRepository.deleteAll())));
+                        .then(artistRepository.deleteAll()
+                                .then(simplifiedAlbumRepository.deleteAll())));
     }
-
-
 
     private Mono<TrackEntity> saveTrack(@NotNull TrackEntity track, SimplifiedAlbumEntity albumEntity) {
         track.setAlbum(albumEntity);
