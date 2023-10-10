@@ -1,22 +1,26 @@
 package com.odeyalo.sonata.miku.api;
 
 import com.odeyalo.sonata.miku.dto.AlbumDto;
-import com.odeyalo.sonata.miku.entity.SimplifiedAlbumEntity;
+import com.odeyalo.sonata.miku.entity.AlbumEntity;
+import com.odeyalo.sonata.miku.entity.ArtistEntity;
+import com.odeyalo.sonata.miku.entity.SimplifiedTrackEntity;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import testing.asserts.AlbumDtoAssert;
-import testing.faker.SimplifiedAlbumEntityFaker;
+import testing.faker.AlbumEntityFaker;
+import testing.faker.ArtistEntityFaker;
+import testing.faker.SimplifiedTrackEntityFaker;
 import testing.qa.AutoconfigureQaEnvironment;
 import testing.qa.operations.QaOperations;
 
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static testing.asserts.AlbumDtoAssert.forAlbum;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -34,13 +38,26 @@ public class FetchAlbumByIdEndpointTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class ExistingAlbumTests {
         private static final String ALBUM_ID = "water";
-        SimplifiedAlbumEntity existingAlbum;
+        AlbumEntity existingAlbum;
 
         @BeforeEach
         void setUp() {
-            var album = SimplifiedAlbumEntityFaker.create().setPublicId(ALBUM_ID).get();
+            var artist = ArtistEntityFaker.create().get();
 
-            existingAlbum = qaOperations.albums().saveSimplifiedAlbum(album);
+            var track = SimplifiedTrackEntityFaker.create()
+                    .clearArtists()
+                    .artist(artist)
+                    .get();
+
+            var album = AlbumEntityFaker.create()
+                    .clearArtists()
+                    .clearTracks()
+                    .publicId(ALBUM_ID)
+                    .artist(artist)
+                    .track(track)
+                    .get();
+
+            existingAlbum = qaOperations.albums().saveAlbum(album);
         }
 
         @AfterEach
@@ -67,7 +84,7 @@ public class FetchAlbumByIdEndpointTest {
 
             AlbumDto responseBody = responseSpec.expectBody(AlbumDto.class).returnResult().getResponseBody();
 
-            AlbumDtoAssert.forAlbum(responseBody).id().isEqualTo(ALBUM_ID);
+            forAlbum(responseBody).id().isEqualTo(ALBUM_ID);
         }
 
         @Test
@@ -75,7 +92,7 @@ public class FetchAlbumByIdEndpointTest {
             WebTestClient.ResponseSpec responseSpec = fetchExistingAlbum();
             AlbumDto responseBody = responseSpec.expectBody(AlbumDto.class).returnResult().getResponseBody();
 
-            AlbumDtoAssert.forAlbum(responseBody).name().isEqualTo(existingAlbum.getName());
+            forAlbum(responseBody).name().isEqualTo(existingAlbum.getName());
         }
 
         @Test
@@ -84,7 +101,89 @@ public class FetchAlbumByIdEndpointTest {
 
             AlbumDto responseBody = responseSpec.expectBody(AlbumDto.class).returnResult().getResponseBody();
 
-            AlbumDtoAssert.forAlbum(responseBody).albumType().isEqualTo(existingAlbum.getAlbumType());
+            forAlbum(responseBody).albumType().isEqualTo(existingAlbum.getAlbumType());
+        }
+
+        @Test
+        void shouldReturnTotalTrackCount() {
+            WebTestClient.ResponseSpec responseSpec = fetchExistingAlbum();
+
+            AlbumDto responseBody = responseSpec.expectBody(AlbumDto.class).returnResult().getResponseBody();
+
+            forAlbum(responseBody).totalTracks(existingAlbum.getTotalTracksCount());
+        }
+
+        @Test
+        void shouldReturnArtists() {
+            WebTestClient.ResponseSpec responseSpec = fetchExistingAlbum();
+
+            AlbumDto responseBody = responseSpec.expectBody(AlbumDto.class).returnResult().getResponseBody();
+
+            forAlbum(responseBody).artists().isNotNull();
+        }
+
+        @Test
+        void shouldReturnArtistPublicIdInBody() {
+            WebTestClient.ResponseSpec responseSpec = fetchExistingAlbum();
+
+            AlbumDto responseBody = responseSpec.expectBody(AlbumDto.class).returnResult().getResponseBody();
+
+            ArtistEntity firstArtist = existingAlbum.getArtists().get(0);
+
+            forAlbum(responseBody).artists().peekFirst().id().isEqualTo(firstArtist.getPublicId());
+        }
+
+        @Test
+        void shouldReturnArtistPublicNameInBody() {
+            WebTestClient.ResponseSpec responseSpec = fetchExistingAlbum();
+
+            AlbumDto responseBody = responseSpec.expectBody(AlbumDto.class).returnResult().getResponseBody();
+
+            ArtistEntity firstArtist = existingAlbum.getArtists().get(0);
+
+            forAlbum(responseBody).artists().peekFirst().name().isEqualTo(firstArtist.getName());
+        }
+
+        @Test
+        void shouldReturnTracks() {
+            WebTestClient.ResponseSpec responseSpec = fetchExistingAlbum();
+
+            AlbumDto responseBody = responseSpec.expectBody(AlbumDto.class).returnResult().getResponseBody();
+
+            AlbumDtoAssert.forAlbum(responseBody).tracks().peekFirst().isNotNull();
+        }
+
+        @Test
+        void shouldReturnTrackWithId() {
+            WebTestClient.ResponseSpec responseSpec = fetchExistingAlbum();
+
+            AlbumDto responseBody = responseSpec.expectBody(AlbumDto.class).returnResult().getResponseBody();
+
+            SimplifiedTrackEntity firstTrack = existingAlbum.getTracks().get(0);
+
+            AlbumDtoAssert.forAlbum(responseBody).tracks().peekFirst().id().isEqualTo(firstTrack.getPublicId());
+        }
+
+        @Test
+        void shouldReturnTrackWithName() {
+            WebTestClient.ResponseSpec responseSpec = fetchExistingAlbum();
+
+            AlbumDto responseBody = responseSpec.expectBody(AlbumDto.class).returnResult().getResponseBody();
+
+            SimplifiedTrackEntity firstTrack = existingAlbum.getTracks().get(0);
+
+            AlbumDtoAssert.forAlbum(responseBody).tracks().peekFirst().name().isEqualTo(firstTrack.getName());
+        }
+
+        @Test
+        void shouldReturnTrackWithArtist() {
+            WebTestClient.ResponseSpec responseSpec = fetchExistingAlbum();
+
+            AlbumDto responseBody = responseSpec.expectBody(AlbumDto.class).returnResult().getResponseBody();
+
+            SimplifiedTrackEntity firstTrack = existingAlbum.getTracks().get(0);
+
+            AlbumDtoAssert.forAlbum(responseBody).tracks().peekFirst().artists().length(1);
         }
 
         @NotNull

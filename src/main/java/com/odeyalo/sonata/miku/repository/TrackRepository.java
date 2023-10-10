@@ -13,6 +13,8 @@ public interface TrackRepository extends BaseRepository<TrackEntity, Long> {
 
     Flux<TrackEntity> findAllByPublicIdIsIn(String... ids);
 
+    Flux<TrackEntity> findAllByAlbumId(Long albumId);
+
     Mono<Void> deleteByPublicId(String id);
 
 }

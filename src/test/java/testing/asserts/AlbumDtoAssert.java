@@ -9,10 +9,6 @@ public class AlbumDtoAssert extends AbstractAssert<AlbumDtoAssert, AlbumDto> {
         super(actual, AlbumDtoAssert.class);
     }
 
-    protected AlbumDtoAssert(AlbumDto actual, Class<?> selfType) {
-        super(actual, selfType);
-    }
-
     public static AlbumDtoAssert forAlbum(AlbumDto actual) {
         return new AlbumDtoAssert(actual);
     }
@@ -27,5 +23,20 @@ public class AlbumDtoAssert extends AbstractAssert<AlbumDtoAssert, AlbumDto> {
 
     public AlbumTypeAssert albumType() {
         return new AlbumTypeAssert(actual.getAlbumType());
+    }
+
+    public AlbumDtoAssert totalTracks(int expectedCount) {
+        if (actual.getTotalTracksCount() != expectedCount) {
+            throw failureWithActualExpected(actual.getTotalTracksCount(), expectedCount, "Expected total tracks count to be equal!");
+        }
+        return this;
+    }
+
+    public SimplifiedTrackDtoContainerAssert tracks() {
+        return new SimplifiedTrackDtoContainerAssert(actual.getTracks());
+    }
+
+    public ArtistsDtoAssert artists() {
+        return new ArtistsDtoAssert(actual.getArtists());
     }
 }

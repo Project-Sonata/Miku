@@ -1,7 +1,8 @@
-package com.odeyalo.sonata.miku.repository;
+package com.odeyalo.sonata.miku.repository.r2dbc;
 
 import com.odeyalo.sonata.miku.entity.TrackArtistEntity;
-import com.odeyalo.sonata.miku.repository.support.delegate.R2dbcTrackArtistRepositoryDelegate;
+import com.odeyalo.sonata.miku.repository.TrackArtistRepository;
+import com.odeyalo.sonata.miku.repository.r2dbc.delegate.R2dbcTrackArtistRepositoryDelegate;
 import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;

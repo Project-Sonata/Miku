@@ -4,9 +4,11 @@ import com.odeyalo.sonata.miku.entity.AlbumEntity;
 import com.odeyalo.sonata.miku.entity.SimplifiedAlbumEntity;
 import com.odeyalo.sonata.miku.entity.TrackEntity;
 import com.odeyalo.sonata.miku.repository.*;
+import com.odeyalo.sonata.miku.repository.r2dbc.delegate.R2dbcAlbumRepositoryDelegate;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Profile;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +24,9 @@ public class QaController {
     private final ArtistRepository artistRepository;
     private final TrackArtistRepository trackArtistRepository;
     private final SimplifiedAlbumRepository simplifiedAlbumRepository;
-    private final AlbumRepository albumRepository;
+    private final R2dbcAlbumRepositoryDelegate albumRepository;
+    private final AlbumArtistRepository albumArtistRepository;
+    private final TransactionalOperator transactionalOperator;
 
     @PostMapping("/track")
     public Mono<TrackEntity> saveTrack(@RequestBody TrackEntity track) {
@@ -35,9 +39,10 @@ public class QaController {
     @DeleteMapping("/track/clear")
     public Mono<Void> clearTracks() {
         return trackArtistRepository.deleteAll()
-                .then(trackRepository.deleteAll()
-                        .then(simplifiedAlbumRepository.deleteAll()
-                                .then(artistRepository.deleteAll())));
+                .then(albumArtistRepository.deleteAll())
+                .then(trackRepository.deleteAll())
+                .then(simplifiedAlbumRepository.deleteAll())
+                .then(artistRepository.deleteAll());
     }
 
     @PostMapping("/album/simplified/")
@@ -47,15 +52,17 @@ public class QaController {
 
     @PostMapping("/album/")
     public Mono<AlbumEntity> saveAlbum(@RequestBody AlbumEntity album) {
-        return albumRepository.save(album);
+        return albumRepository.save(album)
+                .as(transactionalOperator::transactional);
     }
 
     @DeleteMapping("/album/clear")
     public Mono<Void> clearAlbums() {
         return trackArtistRepository.deleteAll()
-                .then(trackRepository.deleteAll()
-                        .then(artistRepository.deleteAll()
-                                .then(simplifiedAlbumRepository.deleteAll())));
+                .then(albumArtistRepository.deleteAll())
+                .then(trackRepository.deleteAll())
+                .then(artistRepository.deleteAll())
+                .then(simplifiedAlbumRepository.deleteAll());
     }
 
     private Mono<TrackEntity> saveTrack(@NotNull TrackEntity track, SimplifiedAlbumEntity albumEntity) {

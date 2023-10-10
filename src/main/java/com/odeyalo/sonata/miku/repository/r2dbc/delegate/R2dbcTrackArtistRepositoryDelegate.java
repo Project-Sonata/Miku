@@ -1,4 +1,4 @@
-package com.odeyalo.sonata.miku.repository.support.delegate;
+package com.odeyalo.sonata.miku.repository.r2dbc.delegate;
 
 import com.odeyalo.sonata.miku.entity.TrackArtistEntity;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;

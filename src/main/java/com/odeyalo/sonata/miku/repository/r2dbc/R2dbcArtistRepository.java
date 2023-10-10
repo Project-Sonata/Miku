@@ -1,7 +1,8 @@
-package com.odeyalo.sonata.miku.repository;
+package com.odeyalo.sonata.miku.repository.r2dbc;
 
 import com.odeyalo.sonata.miku.entity.ArtistEntity;
-import com.odeyalo.sonata.miku.repository.support.delegate.R2dbcArtistRepositoryDelegate;
+import com.odeyalo.sonata.miku.repository.ArtistRepository;
+import com.odeyalo.sonata.miku.repository.r2dbc.delegate.R2dbcArtistRepositoryDelegate;
 import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -18,6 +19,11 @@ public class R2dbcArtistRepository implements ArtistRepository {
 
     public R2dbcArtistRepository(R2dbcArtistRepositoryDelegate r2dbcArtistRepositoryDelegate) {
         this.r2dbcArtistRepositoryDelegate = r2dbcArtistRepositoryDelegate;
+    }
+
+    @Override
+    public Mono<ArtistEntity> findByPublicId(String publicId) {
+        return r2dbcArtistRepositoryDelegate.findByPublicId(publicId);
     }
 
     @Override

@@ -6,16 +6,14 @@ import com.odeyalo.sonata.miku.model.AlbumType;
 import org.apache.commons.lang3.RandomStringUtils;
 
 public class SimplifiedAlbumEntityFaker {
-    private String publicId;
-    private String name;
-    private AlbumType albumType;
-
+    private final SimplifiedAlbumEntity.SimplifiedAlbumEntityBuilder<?, ?> builder = SimplifiedAlbumEntity.builder();
     final Faker faker = new Faker();
 
     public SimplifiedAlbumEntityFaker() {
-        this.publicId = RandomStringUtils.randomAlphanumeric(22);
-        this.name = faker.name().title();
-        this.albumType = faker.options().option(AlbumType.class);
+        builder.publicId(RandomStringUtils.randomAlphanumeric(22))
+                .name(faker.name().title())
+                .albumType(faker.options().option(AlbumType.class))
+                .totalTracksCount(faker.random().nextInt(0, 10));
     }
 
     public static SimplifiedAlbumEntityFaker create() {
@@ -23,25 +21,26 @@ public class SimplifiedAlbumEntityFaker {
     }
 
     public SimplifiedAlbumEntityFaker setPublicId(String publicId) {
-        this.publicId = publicId;
+        this.builder.publicId(publicId);
         return this;
     }
 
     public SimplifiedAlbumEntityFaker setName(String name) {
-        this.name = name;
+        this.builder.name(name);
         return this;
     }
 
     public SimplifiedAlbumEntityFaker setAlbumType(AlbumType albumType) {
-        this.albumType = albumType;
+        this.builder.albumType(albumType);
+        return this;
+    }
+
+    public SimplifiedAlbumEntityFaker setTotalTracks(int totalTracks) {
+        this.builder.totalTracksCount(totalTracks);
         return this;
     }
 
     public SimplifiedAlbumEntity get() {
-        return SimplifiedAlbumEntity.builder()
-                .publicId(publicId)
-                .name(name)
-                .albumType(albumType)
-                .build();
+        return builder.build();
     }
 }

@@ -1,7 +1,9 @@
-package com.odeyalo.sonata.miku.repository;
+package com.odeyalo.sonata.miku.repository.r2dbc;
 
 import com.odeyalo.sonata.miku.entity.TrackEntity;
-import com.odeyalo.sonata.miku.repository.support.delegate.R2dbcTrackRepositoryDelegate;
+import com.odeyalo.sonata.miku.repository.TrackArtistRemoveCapable;
+import com.odeyalo.sonata.miku.repository.TrackRepository;
+import com.odeyalo.sonata.miku.repository.r2dbc.delegate.R2dbcTrackRepositoryDelegate;
 import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -77,6 +79,11 @@ public class R2dbcTrackRepository implements TrackRepository {
     @Override
     public Flux<TrackEntity> findAllByPublicIdIsIn(String... ids) {
         return r2dbcTrackRepositoryDelegate.findAllByPublicIdIsIn(ids);
+    }
+
+    @Override
+    public Flux<TrackEntity> findAllByAlbumId(Long albumId) {
+        return r2dbcTrackRepositoryDelegate.findAllByAlbumId(albumId);
     }
 
     @Override
