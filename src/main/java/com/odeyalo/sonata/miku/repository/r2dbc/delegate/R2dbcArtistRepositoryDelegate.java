@@ -1,9 +1,10 @@
-package com.odeyalo.sonata.miku.repository.support.delegate;
+package com.odeyalo.sonata.miku.repository.r2dbc.delegate;
 
 import com.odeyalo.sonata.miku.entity.ArtistEntity;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 
@@ -22,4 +23,5 @@ public interface R2dbcArtistRepositoryDelegate extends R2dbcRepository<ArtistEnt
      */
     Flux<ArtistEntity> findAllByPublicIdIn(Collection<String> ids);
 
+    Mono<ArtistEntity> findByPublicId(String publicId);
 }

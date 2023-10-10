@@ -1,7 +1,8 @@
 package com.odeyalo.sonata.miku.repository;
 
 import com.odeyalo.sonata.miku.entity.ArtistEntity;
-import com.odeyalo.sonata.miku.repository.support.delegate.R2dbcArtistRepositoryDelegate;
+import com.odeyalo.sonata.miku.repository.r2dbc.R2dbcArtistRepository;
+import com.odeyalo.sonata.miku.repository.r2dbc.delegate.R2dbcArtistRepositoryDelegate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

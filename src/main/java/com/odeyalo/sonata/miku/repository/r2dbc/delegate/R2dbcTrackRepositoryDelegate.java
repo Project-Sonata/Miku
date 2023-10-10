@@ -1,4 +1,4 @@
-package com.odeyalo.sonata.miku.repository.support.delegate;
+package com.odeyalo.sonata.miku.repository.r2dbc.delegate;
 
 import com.odeyalo.sonata.miku.entity.TrackEntity;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
@@ -14,6 +14,8 @@ public interface R2dbcTrackRepositoryDelegate extends R2dbcRepository<TrackEntit
     Mono<TrackEntity> findByPublicId(String publicId);
 
     Flux<TrackEntity> findAllByPublicIdIsIn(String... ids);
+
+    Flux<TrackEntity> findAllByAlbumId(Long albumId);
 
     Mono<Void> deleteByPublicId(String id);
 }

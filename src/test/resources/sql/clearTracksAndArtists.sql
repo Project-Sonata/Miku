@@ -1,4 +1,10 @@
-DELETE FROM tracks_artists;
-DELETE FROM artists;
-DELETE FROM tracks;
-DELETE FROM albums;
+DELETE
+FROM tracks_artists;
+DELETE
+FROM album_artists;
+DELETE
+FROM artists;
+DELETE
+FROM tracks;
+DELETE
+FROM albums;

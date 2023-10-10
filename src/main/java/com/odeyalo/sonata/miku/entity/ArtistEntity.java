@@ -22,4 +22,12 @@ public class ArtistEntity {
     String publicId;
     @Column("artist_name")
     String name;
+
+    public static ArtistEntity from(ArtistEntity parent) {
+        return builder()
+                .id(parent.getId())
+                .publicId(parent.getPublicId())
+                .name(parent.getName())
+                .build();
+    }
 }

@@ -1,6 +1,8 @@
 package com.odeyalo.sonata.miku.repository;
 
+import com.odeyalo.sonata.miku.entity.ArtistEntity;
 import com.odeyalo.sonata.miku.entity.TrackEntity;
+import com.odeyalo.sonata.miku.repository.r2dbc.R2dbcTrackRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +17,8 @@ import testing.sql.SqlScriptRunnerTestExecutionListener;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for R2dbcTrackRepository
@@ -110,8 +114,7 @@ class R2dbcTrackRepositoryTest {
     }
 
     @Test
-    @SqlScript(beforeTestExecutionLocations = "./sql/singleTrackAndArtist.sql"
-            ,
+    @SqlScript(beforeTestExecutionLocations = "./sql/singleTrackAndArtist.sql",
             afterTestExecutionLocations = "./sql/clearTracksAndArtists.sql"
     )
     void shouldReturnSimplifiedAlbumEntity() {
@@ -146,12 +149,14 @@ class R2dbcTrackRepositoryTest {
                 .get();
 
         insertTrackEntities(track);
+        // StepVerifier doesn't used because of findAll* methods return data in random order
+        List<ArtistEntity> foundArtists = artistRepository
+                .findAllByPublicIdIn(bones.getPublicId(), baker.getPublicId())
+                .collectList().block();
 
-        artistRepository.findAllByPublicIdIn(bones.getPublicId(), baker.getPublicId())
-                .as(StepVerifier::create)
-                .expectNext(bones)
-                .expectNext(baker)
-                .verifyComplete();
+        assertThat(foundArtists).isNotNull();
+
+        assertThat(foundArtists).containsAll(track.getArtists());
     }
 
     private void insertTrackEntities(TrackEntity... entities) {
