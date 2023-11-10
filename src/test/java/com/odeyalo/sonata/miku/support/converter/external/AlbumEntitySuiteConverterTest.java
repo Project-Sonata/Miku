@@ -51,6 +51,7 @@ class AlbumEntitySuiteConverterTest {
                         .build()
         ));
         return UploadedAlbumInfoDto.builder()
+                .id("helloooo")
                 .totalTracksCount(10)
                 .name("hello")
                 .albumType(AlbumType.SINGLE)
