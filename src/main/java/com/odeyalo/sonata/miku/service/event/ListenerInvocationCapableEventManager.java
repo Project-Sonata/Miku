@@ -49,6 +49,7 @@ public class ListenerInvocationCapableEventManager implements EventListenerRegis
     }
 
     @Override
+    @NotNull
     public Collection<EventListener> getListeners() {
         return listeners;
     }
