@@ -3,7 +3,6 @@ package com.odeyalo.sonata.miku.repository.r2dbc.support.callback.write;
 import com.odeyalo.sonata.miku.entity.SimplifiedTrackEntity;
 import com.odeyalo.sonata.miku.repository.support.EntityPublicIdGenerator;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
 import org.springframework.data.r2dbc.mapping.event.BeforeConvertCallback;
@@ -25,9 +24,8 @@ public class TrackPublicIdGeneratorOnMissingBeforeConvertEntityCallback implemen
     public Publisher<SimplifiedTrackEntity> onBeforeConvert(@NotNull SimplifiedTrackEntity entity,
                                                             @NotNull SqlIdentifier table) {
         if ( entity.getPublicId() == null ) {
-            String publicId = RandomStringUtils.randomAlphanumeric(22);
-            log.info("Missing public ID property for: {}. Generated public id: {}.", entity, publicId);
-            entity.setPublicId(publicId);
+            return publicIdGenerator.generatePublicId(entity)
+                    .map(entity::setPublicId);
         }
         return Mono.just(entity);
     }
