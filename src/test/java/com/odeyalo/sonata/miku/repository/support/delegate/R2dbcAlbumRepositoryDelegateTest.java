@@ -22,6 +22,7 @@ import testing.faker.ArtistEntityFaker;
 import testing.faker.SimplifiedTrackEntityFaker;
 
 import java.util.List;
+import java.util.Objects;
 
 @SpringBootTest
 @TestInstance(Lifecycle.PER_CLASS)
@@ -75,6 +76,15 @@ class R2dbcAlbumRepositoryDelegateTest {
         r2dbcAlbumRepositoryDelegate.save(album)
                 .as(StepVerifier::create)
                 .expectNextCount(1)
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldGeneratePublicIdIfNull() {
+        var albumEntity = AlbumEntityFaker.create().publicId(null).get();
+        r2dbcAlbumRepositoryDelegate.save(albumEntity)
+                .as(StepVerifier::create)
+                .expectNextMatches(Objects::nonNull)
                 .verifyComplete();
     }
 
