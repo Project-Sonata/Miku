@@ -24,13 +24,14 @@ public interface EventListenerRegistry {
      *
      * @param eventListener - listener to delete from, not null.
      */
-    void deleteListener(EventListener eventListener);
+    void deleteListener(@NotNull EventListener eventListener);
 
     /**
      * Return collection of all listeners.
      *
      * @return mutable collection of all listeners
      */
+    @NotNull
     Collection<EventListener> getListeners();
 
 }

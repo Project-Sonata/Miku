@@ -3,6 +3,7 @@ package com.odeyalo.sonata.miku.service.event;
 import com.odeyalo.sonata.miku.service.event.source.EventSource;
 import com.odeyalo.sonata.suite.brokers.events.SonataEvent;
 import jakarta.annotation.PostConstruct;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
@@ -22,7 +23,7 @@ public class ListenerInvocationCapableEventManager implements EventListenerRegis
     public ListenerInvocationCapableEventManager(Collection<EventListener> listeners, EventSource<SonataEvent> eventSource) {
         this.listeners = new ArrayList<>(listeners);
         this.eventSource = eventSource;
-        cachedListeners = Flux.fromIterable(listeners);
+        this.cachedListeners = Flux.fromIterable(listeners);
     }
 
     @PostConstruct
@@ -36,13 +37,13 @@ public class ListenerInvocationCapableEventManager implements EventListenerRegis
     }
 
     @Override
-    public void addListener(EventListener eventListener) {
+    public void addListener(@NotNull EventListener eventListener) {
         listeners.add(eventListener);
         refreshCachedListeners();
     }
 
     @Override
-    public void deleteListener(EventListener eventListener) {
+    public void deleteListener(@NotNull EventListener eventListener) {
         listeners.remove(eventListener);
         refreshCachedListeners();
     }
@@ -53,6 +54,6 @@ public class ListenerInvocationCapableEventManager implements EventListenerRegis
     }
 
     private void refreshCachedListeners() {
-        cachedListeners = Flux.fromIterable(listeners);
+        this.cachedListeners = Flux.fromIterable(listeners);
     }
 }
