@@ -86,6 +86,15 @@ class R2dbcTrackRepositoryTest {
     }
 
     @Test
+    void shouldGeneratePublicIdIfNull() {
+        var trackEntity = TrackEntityFaker.create().setPublicId(null).get();
+
+        insertTrackEntities(trackEntity);
+
+        assertThat(trackEntity.getPublicId()).isNotEmpty();
+    }
+
+    @Test
     @SqlScript(afterTestExecutionLocations = "./sql/clearTracksAndArtists.sql")
     void shouldDeleteByPublicId() {
         var firstTrack = TrackEntityFaker.create().get();
