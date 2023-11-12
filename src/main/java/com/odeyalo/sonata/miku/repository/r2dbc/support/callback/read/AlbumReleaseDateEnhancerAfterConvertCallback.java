@@ -3,8 +3,8 @@ package com.odeyalo.sonata.miku.repository.r2dbc.support.callback.read;
 import com.odeyalo.sonata.miku.entity.SimplifiedAlbumEntity;
 import com.odeyalo.sonata.miku.model.ReleaseDate;
 import com.odeyalo.sonata.miku.model.ReleaseDate.Precision;
-import com.odeyalo.sonata.miku.repository.r2dbc.support.release.release.ReleaseDateDecoder;
-import com.odeyalo.sonata.miku.repository.r2dbc.support.release.release.ReleaseDateRowInfo;
+import com.odeyalo.sonata.miku.support.converter.release.ReleaseDateDecoder;
+import com.odeyalo.sonata.miku.support.converter.release.ReleaseDateInfo;
 import org.apache.commons.lang3.EnumUtils;
 import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
@@ -18,9 +18,9 @@ import reactor.core.publisher.Mono;
  */
 @Component
 public class AlbumReleaseDateEnhancerAfterConvertCallback implements AfterConvertCallback<SimplifiedAlbumEntity> {
-    private final ReleaseDateDecoder<ReleaseDateRowInfo> releaseDateDecoder;
+    private final ReleaseDateDecoder<ReleaseDateInfo> releaseDateDecoder;
 
-    public AlbumReleaseDateEnhancerAfterConvertCallback(ReleaseDateDecoder<ReleaseDateRowInfo> releaseDateDecoder) {
+    public AlbumReleaseDateEnhancerAfterConvertCallback(ReleaseDateDecoder<ReleaseDateInfo> releaseDateDecoder) {
         this.releaseDateDecoder = releaseDateDecoder;
     }
 
@@ -32,7 +32,7 @@ public class AlbumReleaseDateEnhancerAfterConvertCallback implements AfterConver
         String releaseDate = entity.getReleaseDateAsString();
         Precision precision = toPrecision(entity);
 
-        ReleaseDate date = releaseDateDecoder.decodeReleaseDate(ReleaseDateRowInfo.of(releaseDate, precision));
+        ReleaseDate date = releaseDateDecoder.decodeReleaseDate(ReleaseDateInfo.of(releaseDate, precision));
 
         entity.setReleaseDate(date);
 

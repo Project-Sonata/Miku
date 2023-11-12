@@ -1,4 +1,4 @@
-package com.odeyalo.sonata.miku.repository.r2dbc.support.release.release;
+package com.odeyalo.sonata.miku.support.converter.release;
 
 /**
  * Central interface to convert the release date from and to database.

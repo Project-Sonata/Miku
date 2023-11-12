@@ -1,6 +1,8 @@
 package com.odeyalo.sonata.miku.repository.r2dbc.support.release.release;
 
 import com.odeyalo.sonata.miku.model.ReleaseDate;
+import com.odeyalo.sonata.miku.support.converter.release.FormattedString2ReleaseDateConverter;
+import com.odeyalo.sonata.miku.support.converter.release.ReleaseDateInfo;
 import org.junit.jupiter.api.Test;
 
 import static java.lang.String.format;
@@ -13,28 +15,28 @@ class FormattedString2ReleaseDateConverterTest {
 
     @Test
     void shouldDecodeReleaseDateForDayPrecisionAndReturnValidString() {
-        ReleaseDate actual = converter.decodeReleaseDate(ReleaseDateRowInfo.of("2023-12-03", ReleaseDate.Precision.DAY));
+        ReleaseDate actual = converter.decodeReleaseDate(ReleaseDateInfo.of("2023-12-03", ReleaseDate.Precision.DAY));
 
         assertThat(actual).isEqualTo(ReleaseDate.withDay(3, 12, 2023));
     }
 
     @Test
     void shouldDecodeReleaseDateForMonthPrecisionAndReturnValidString() {
-        ReleaseDate actual = converter.decodeReleaseDate(ReleaseDateRowInfo.of("2023-08", ReleaseDate.Precision.MONTH));
+        ReleaseDate actual = converter.decodeReleaseDate(ReleaseDateInfo.of("2023-08", ReleaseDate.Precision.MONTH));
 
         assertThat(actual).isEqualTo(ReleaseDate.withMonth(8, 2023));
     }
 
     @Test
     void shouldDecodeReleaseDateForYearPrecisionAndReturnValidString() {
-        ReleaseDate actual = converter.decodeReleaseDate(ReleaseDateRowInfo.of("2023", ReleaseDate.Precision.YEAR));
+        ReleaseDate actual = converter.decodeReleaseDate(ReleaseDateInfo.of("2023", ReleaseDate.Precision.YEAR));
 
         assertThat(actual).isEqualTo(ReleaseDate.onlyYear(2023));
     }
 
     @Test
     void shouldThrowExceptionIfTheDateAndPrecisionHintHasMismatch() {
-        ReleaseDateRowInfo invalidRowInfo = ReleaseDateRowInfo.of("2023", ReleaseDate.Precision.MONTH);
+        ReleaseDateInfo invalidRowInfo = ReleaseDateInfo.of("2023", ReleaseDate.Precision.MONTH);
 
         assertThatThrownBy(() -> converter.decodeReleaseDate(invalidRowInfo))
                 .isInstanceOf(IllegalArgumentException.class)
