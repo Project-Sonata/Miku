@@ -2,7 +2,7 @@ package com.odeyalo.sonata.miku.repository.r2dbc.support.callback.write;
 
 import com.odeyalo.sonata.miku.entity.SimplifiedAlbumEntity;
 import com.odeyalo.sonata.miku.model.ReleaseDate;
-import com.odeyalo.sonata.miku.repository.r2dbc.support.release.release.ReleaseDateEncoder;
+import com.odeyalo.sonata.miku.support.converter.release.ReleaseDateEncoder;
 import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;

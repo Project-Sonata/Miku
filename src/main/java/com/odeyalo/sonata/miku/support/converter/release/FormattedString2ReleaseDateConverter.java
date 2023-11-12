@@ -1,4 +1,4 @@
-package com.odeyalo.sonata.miku.repository.r2dbc.support.release.release;
+package com.odeyalo.sonata.miku.support.converter.release;
 
 import com.odeyalo.sonata.miku.model.ReleaseDate;
 import lombok.SneakyThrows;
@@ -17,12 +17,12 @@ import static java.lang.String.format;
  * ReleaseDateConverter that uses formatted string for encoding and decoding the release date
  */
 @Component
-public class FormattedString2ReleaseDateConverter implements ReleaseDateConverter<ReleaseDateRowInfo, String> {
+public class FormattedString2ReleaseDateConverter implements ReleaseDateConverter<ReleaseDateInfo, String> {
     private static final String DATE_SPLITERATOR = "-";
 
     @Override
     @NotNull
-    public ReleaseDate decodeReleaseDate(@NotNull ReleaseDateRowInfo source) {
+    public ReleaseDate decodeReleaseDate(@NotNull ReleaseDateInfo source) {
         String releaseDate = source.date();
         ReleaseDate.Precision precision = source.precisionHint();
 
