@@ -3,8 +3,8 @@ WITH artist_insert_id AS (
         values ('artistuniqueid', 'Mosquit') returning id),
 
      album_insert_id AS (
-         insert into albums (public_id, album_name, album_type)
-             values ('albumid', 'Adobe of the soul', 'ALBUM') returning id),
+         insert into albums (public_id, album_name, album_type, release_date, release_date_precision)
+             values ('albumid', 'Adobe of the soul', 'ALBUM', '2022', 'YEAR') returning id),
 
      track_insert_id AS (
          insert into tracks (public_id, name, duration_ms, album_id)
