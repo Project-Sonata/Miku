@@ -79,7 +79,6 @@ class ListenerInvocationCapableEventManagerTest {
         // Initiate listening to events and delegating
         testable.startEventListening();
 
-
         SpyEventListener spyListener2 = new SpyEventListener();
         testable.addListener(spyListener2);
 
@@ -88,6 +87,7 @@ class ListenerInvocationCapableEventManagerTest {
         eventSource.emitNext(event)
                 .as(StepVerifier::create)
                 .verifyComplete();
+
         // Then
         assertThat(spyListener1.hasBeenCalled()).isTrue();
         assertThat(spyListener2.hasBeenCalled()).isTrue();
@@ -106,7 +106,6 @@ class ListenerInvocationCapableEventManagerTest {
         // Initiate listening to events and delegating
         testable.startEventListening();
 
-
         testable.deleteListener(spyListener2);
 
         var event = new MockSonataEvent("I love Miku!");
@@ -114,6 +113,7 @@ class ListenerInvocationCapableEventManagerTest {
         eventSource.emitNext(event)
                 .as(StepVerifier::create)
                 .verifyComplete();
+
         // Then
         assertThat(spyListener1.hasBeenCalled()).isTrue();
         assertThat(spyListener2.hasBeenCalled()).isFalse();

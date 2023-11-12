@@ -18,18 +18,16 @@ import java.util.Collection;
 public class ListenerInvocationCapableEventManager implements EventListenerRegistry {
     private final Collection<EventListener> listeners;
     private final EventSource<SonataEvent> eventSource;
-    private Flux<EventListener> cachedListeners;
 
     public ListenerInvocationCapableEventManager(Collection<EventListener> listeners, EventSource<SonataEvent> eventSource) {
         this.listeners = new ArrayList<>(listeners);
         this.eventSource = eventSource;
-        this.cachedListeners = Flux.fromIterable(listeners);
     }
 
     @PostConstruct
     public void startEventListening() {
         eventSource.getEvents()
-                .flatMap(event -> cachedListeners
+                .flatMap(event -> Flux.fromIterable(listeners)
                         .filter(listener -> listener.supports(event))
                         .flatMap(listener -> listener.handleEvent(event)))
                 .subscribeOn(Schedulers.parallel())
@@ -39,22 +37,16 @@ public class ListenerInvocationCapableEventManager implements EventListenerRegis
     @Override
     public void addListener(@NotNull EventListener eventListener) {
         listeners.add(eventListener);
-        refreshCachedListeners();
     }
 
     @Override
     public void deleteListener(@NotNull EventListener eventListener) {
         listeners.remove(eventListener);
-        refreshCachedListeners();
     }
 
     @Override
     @NotNull
     public Collection<EventListener> getListeners() {
         return listeners;
-    }
-
-    private void refreshCachedListeners() {
-        this.cachedListeners = Flux.fromIterable(listeners);
     }
 }
