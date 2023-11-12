@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import testing.asserts.ReleaseDateAssert;
 import testing.spring.config.MapStructBeansBootstrapConfiguration;
 
 import java.util.Collections;
@@ -20,7 +21,7 @@ class AlbumEntitySuiteConverterTest {
     AlbumEntitySuiteConverter testable;
 
     @Test
-    void toAlbumEntity() {
+    void shouldConvertToAlbumEntity() {
         var infoDto = createUploadedAlbumInfoDto();
 
         var result = testable.toAlbumEntity(infoDto);
@@ -40,6 +41,21 @@ class AlbumEntitySuiteConverterTest {
                 .hasSize(infoDto.getTracks().size());
     }
 
+    @Test
+    void shouldContainReleaseDate() {
+        var infoDto = createUploadedAlbumInfoDto();
+
+        var result = testable.toAlbumEntity(infoDto);
+
+        ReleaseDateAssert.forReleaseDate(result.getReleaseDate())
+                .isNotNull()
+                .hasPrecision(infoDto.getReleaseDatePrecision())
+                .hasDay(3)
+                .hasMonth(8)
+                .hasYear(2023);
+
+    }
+
     private static UploadedAlbumInfoDto createUploadedAlbumInfoDto() {
         ArtistContainerDto artists = ArtistContainerDto.single(ArtistDto.of("id", "name"));
         SimplifiedTrackDtoContainer tracks = SimplifiedTrackDtoContainer.of(Collections.singletonList(
@@ -57,7 +73,7 @@ class AlbumEntitySuiteConverterTest {
                 .albumType(AlbumType.SINGLE)
                 .artists(artists)
                 .tracks(tracks)
-                .releaseDatePrecision("YEAR")
+                .releaseDatePrecision("DAY")
                 .releaseDateAsString("2023-08-03")
                 .build();
     }
