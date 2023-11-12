@@ -1,6 +1,7 @@
 package com.odeyalo.sonata.miku.entity;
 
 import com.odeyalo.sonata.miku.model.AlbumType;
+import com.odeyalo.sonata.miku.model.ReleaseDate;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
@@ -32,10 +33,22 @@ public class SimplifiedAlbumEntity implements ArtistsContainerHolder {
     AlbumType albumType;
     @Column("total_tracks_count")
     int totalTracksCount;
+    @Transient
+    ReleaseDate releaseDate;
     @Singular
     @Transient
     @Setter(value = AccessLevel.NONE)
     List<ArtistEntity> artists = new ArrayList<>();
+    // A columns to represent the release date
+    // written here because of Spring R2DBC does not support embedded values.
+    // It can't be achieved using AfterConvertCallback invocation due to lack of Row data, e.g. the values from database cannot be accessed in callback
+    // also, can't do this using Spring Converter<ReleaseDate, OutboundRow>
+    @Column("release_date")
+    @EqualsAndHashCode.Exclude
+    String releaseDateAsString;
+    @Column("release_date_precision")
+    @EqualsAndHashCode.Exclude
+    String releaseDatePrecision;
 
     @Override
     public void setArtists(List<ArtistEntity> artists) {

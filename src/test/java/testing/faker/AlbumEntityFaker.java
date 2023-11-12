@@ -5,6 +5,7 @@ import com.odeyalo.sonata.miku.entity.AlbumEntity;
 import com.odeyalo.sonata.miku.entity.ArtistEntity;
 import com.odeyalo.sonata.miku.entity.SimplifiedTrackEntity;
 import com.odeyalo.sonata.miku.model.AlbumType;
+import com.odeyalo.sonata.miku.model.ReleaseDate;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.Collection;
@@ -23,7 +24,8 @@ public class AlbumEntityFaker {
                 .publicId(RandomStringUtils.randomAlphanumeric(22))
                 .albumType(faker.options().option(AlbumType.class))
                 .artist(ArtistEntityFaker.create().get())
-                .totalTracksCount(totalTracksCount += 1);
+                .totalTracksCount(totalTracksCount += 1)
+                .releaseDate(ReleaseDateFaker.randomReleaseDate().get());
     }
 
 
@@ -78,6 +80,22 @@ public class AlbumEntityFaker {
 
     public AlbumEntityFaker totalTracksCount(int totalTracksCount) {
         builder.totalTracksCount(totalTracksCount);
+        return this;
+    }
+
+
+    public AlbumEntityFaker releaseDate(ReleaseDate releaseDate) {
+        builder.releaseDate(releaseDate);
+        return this;
+    }
+
+    public AlbumEntityFaker releaseDateAsString(String releaseDateAsString) {
+        builder.releaseDateAsString(releaseDateAsString);
+        return this;
+    }
+
+    public AlbumEntityFaker releaseDatePrecision(String releaseDatePrecision) {
+        builder.releaseDatePrecision(releaseDatePrecision);
         return this;
     }
 

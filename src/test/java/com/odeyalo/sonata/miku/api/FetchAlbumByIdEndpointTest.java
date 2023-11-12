@@ -105,6 +105,15 @@ public class FetchAlbumByIdEndpointTest {
         }
 
         @Test
+        void shouldReturnAlbumReleaseDate() {
+            WebTestClient.ResponseSpec responseSpec = fetchExistingAlbum();
+
+            AlbumDto responseBody = responseSpec.expectBody(AlbumDto.class).returnResult().getResponseBody();
+
+            forAlbum(responseBody).releaseDate().isEqualTo(existingAlbum.getReleaseDate());
+        }
+
+        @Test
         void shouldReturnTotalTrackCount() {
             WebTestClient.ResponseSpec responseSpec = fetchExistingAlbum();
 

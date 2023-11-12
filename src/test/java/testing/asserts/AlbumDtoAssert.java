@@ -39,4 +39,8 @@ public class AlbumDtoAssert extends AbstractAssert<AlbumDtoAssert, AlbumDto> {
     public ArtistsDtoAssert artists() {
         return new ArtistsDtoAssert(actual.getArtists());
     }
+
+    public ReleaseDateAssert releaseDate() {
+        return ReleaseDateAssert.forReleaseDate(actual.getReleaseDate());
+    }
 }

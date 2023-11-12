@@ -183,6 +183,35 @@ class R2dbcAlbumRepositoryDelegateTest {
                 .verifyComplete();
     }
 
+    @Test
+    void shouldSaveReleaseDate() {
+        var album = AlbumEntityFaker.create().get();
+
+        r2dbcAlbumRepositoryDelegate.save(album)
+                .as(StepVerifier::create)
+                .expectNextMatches(actual -> actual.getReleaseDate() != null)
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldContainReleaseDateFieldOnSearching() {
+        var album = AlbumEntityFaker.create().get();
+
+        insertAlbumEntities(album);
+
+        r2dbcAlbumRepositoryDelegate.findById(album.getId())
+                .as(StepVerifier::create)
+                .expectNextMatches(actual -> Objects.equals(album.getReleaseDate(), actual.getReleaseDate()))
+                .verifyComplete();
+    }
+
+    @Test
+    void findByNotExistingPublicIdAndReturnNothing() {
+        r2dbcAlbumRepositoryDelegate.findByPublicId("not_existing")
+                .as(StepVerifier::create)
+                .verifyComplete();
+    }
+
     private static boolean expectArtistToBePresentInTrack(ArtistEntity artist, AlbumEntity foundAlbum) {
         SimplifiedTrackEntity firstTrack = foundAlbum.getTracks().get(0);
 
@@ -191,13 +220,6 @@ class R2dbcAlbumRepositoryDelegateTest {
         ArtistEntityAssert.forEntity(albumArtist).publicId().isEqualTo(artist.getPublicId());
         ArtistEntityAssert.forEntity(albumArtist).name().isEqualTo(artist.getName());
         return true;
-    }
-
-    @Test
-    void findByNotExistingPublicIdAndReturnNothing() {
-        r2dbcAlbumRepositoryDelegate.findByPublicId("not_existing")
-                .as(StepVerifier::create)
-                .verifyComplete();
     }
 
     private void insertAlbumEntities(AlbumEntity... albums) {
