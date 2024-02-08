@@ -7,10 +7,13 @@ WITH artist_insert_id AS (
              values ('albumid', 'Adobe of the soul', 'ALBUM', '2022', 'YEAR') returning id),
 
      track_insert_id AS (
-         insert into tracks (public_id, name, duration_ms, album_id)
-             select 'trackuniqueid', 'Chill', 1200, album_insert_id.id FROM album_insert_id returning id)
+         insert into tracks (public_id, name, duration_ms, streaming_uri, album_id)
+             select 'trackuniqueid', 'Chill', 1200, 'https://cdn.sonata.com/track/1', album_insert_id.id
+             FROM album_insert_id returning id)
 
 
-INSERT INTO tracks_artists (track_id, artist_id)
+INSERT
+INTO tracks_artists (track_id, artist_id)
 SELECT track_insert_id.id, artist_insert_id.id
-FROM track_insert_id, artist_insert_id;
+FROM track_insert_id,
+     artist_insert_id;
