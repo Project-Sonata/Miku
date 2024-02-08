@@ -10,6 +10,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.util.Assert;
 
+import java.net.URI;
 import java.util.List;
 
 @Data
@@ -29,6 +30,8 @@ public class SimplifiedTrackEntity implements ArtistsContainerHolder {
     Long durationMs;
     @Column("album_id")
     Long albumId;
+    @Column("streaming_uri")
+    URI streamingUri;
     @Singular
     @Transient
     @Setter(value = AccessLevel.NONE)

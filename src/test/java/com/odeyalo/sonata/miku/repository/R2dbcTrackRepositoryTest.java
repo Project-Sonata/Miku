@@ -17,6 +17,7 @@ import testing.sql.SqlScriptRunnerTestExecutionListener;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -144,6 +145,20 @@ class R2dbcTrackRepositoryTest {
         r2dbcTrackRepository.findById(track.getId())
                 .as(StepVerifier::create)
                 .expectNextMatches(found -> !found.getArtists().isEmpty())
+                .verifyComplete();
+    }
+
+    @Test
+    @SqlScript(beforeTestExecutionLocations = "./sql/createArtistRow.sql",
+            afterTestExecutionLocations = "./sql/clearTracksAndArtists.sql")
+    void shouldReturnStreamingURI() {
+        var track = TrackEntityFaker.create().get();
+
+        insertTrackEntities(track);
+
+        r2dbcTrackRepository.findById(track.getId())
+                .as(StepVerifier::create)
+                .expectNextMatches(found -> Objects.equals(found.getStreamingUri(), track.getStreamingUri()))
                 .verifyComplete();
     }
 

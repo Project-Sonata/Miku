@@ -12,59 +12,49 @@ import java.util.List;
  * Faker to create fake data for TrackEntity
  */
 public class TrackEntityFaker {
-    private String publicId;
-    private String name;
-    private Long durationMs;
-    private SimplifiedAlbumEntity album;
-    private List<ArtistEntity> artists;
-
-    final Faker faker = new Faker();
+    private final Faker faker = new Faker();
+    private final TrackEntity.TrackEntityBuilder<?, ?> builder = TrackEntity.builder();
 
     public TrackEntityFaker() {
-        this.publicId = RandomStringUtils.randomAlphanumeric(22);
-        this.name = faker.name().title();
-        this.durationMs = faker.random().nextLong();
-        this.album = SimplifiedAlbumEntityFaker.create().get();
-        this.artists = List.of(ArtistEntityFaker.create().get());
+        builder.publicId(RandomStringUtils.randomAlphanumeric(22))
+                .name(faker.name().title())
+                .durationMs(faker.random().nextLong())
+                .album(SimplifiedAlbumEntityFaker.create().get())
+                .artists(List.of(ArtistEntityFaker.create().get()))
+                .streamingUri(URIFaker.track().get());
     }
 
     public static TrackEntityFaker create() {
         return new TrackEntityFaker();
     }
 
+    public TrackEntity get() {
+        return builder.build();
+    }
+
     public TrackEntityFaker setPublicId(String publicId) {
-        this.publicId = publicId;
+        this.builder.publicId(publicId);
         return this;
     }
 
     public TrackEntityFaker setName(String name) {
-        this.name = name;
+        this.builder.name(name);
         return this;
     }
 
     public TrackEntityFaker setDurationMs(Long durationMs) {
-        this.durationMs = durationMs;
+        this.builder.durationMs(durationMs);
         return this;
     }
 
     public TrackEntityFaker setAlbum(SimplifiedAlbumEntity album) {
-        this.album = album;
+        this.builder.album(album);
         return this;
     }
 
     public TrackEntityFaker setArtists(List<ArtistEntity> artists) {
-        this.artists = artists;
+        this.builder.clearArtists();
+        this.builder.artists(artists);
         return this;
-    }
-
-    public TrackEntity get() {
-        return TrackEntity.builder()
-                .publicId(publicId)
-                .name(name)
-                .durationMs(durationMs)
-                .album(album)
-                .albumId(album.getId())
-                .artists(artists)
-                .build();
     }
 }
