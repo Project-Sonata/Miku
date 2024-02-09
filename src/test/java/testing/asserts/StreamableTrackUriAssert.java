@@ -24,9 +24,13 @@ public final class StreamableTrackUriAssert extends AbstractAssert<StreamableTra
     }
 
     public StreamableTrackUriAssert hasUri(String uriStr) {
-        if ( Objects.equals(URI.create(uriStr), actual.getUri()) ) {
+        return hasUri(URI.create(uriStr));
+    }
+
+    public StreamableTrackUriAssert hasUri(URI uri) {
+        if ( Objects.equals(uri, actual.getUri()) ) {
             return this;
         }
-        throw failureWithActualExpected(actual.getUri().toString(), uriStr, "Streamable uri mismatch");
+        throw failureWithActualExpected(actual.getUri(), uri, "Streamable uri mismatch");
     }
 }
