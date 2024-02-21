@@ -43,4 +43,8 @@ public class AlbumDtoAssert extends AbstractAssert<AlbumDtoAssert, AlbumDto> {
     public ReleaseDateAssert releaseDate() {
         return ReleaseDateAssert.forReleaseDate(actual.getReleaseDate());
     }
+
+    public ImageDtoContainerAssert images() {
+        return ImageDtoContainerAssert.create(actual.getImages());
+    }
 }
