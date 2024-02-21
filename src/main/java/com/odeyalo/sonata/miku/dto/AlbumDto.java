@@ -24,4 +24,6 @@ public class AlbumDto {
     ArtistsDto artists;
     @JsonProperty("tracks")
     SimplifiedTrackDtoContainer tracks;
+    @JsonProperty("images")
+    ImageDtoContainer images;
 }
