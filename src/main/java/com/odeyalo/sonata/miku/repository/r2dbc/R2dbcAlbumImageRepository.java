@@ -21,11 +21,6 @@ public class R2dbcAlbumImageRepository implements AlbumImageRepository {
     }
 
     @Override
-    public @NotNull Mono<AlbumImageEntity> findByAlbumId(long albumId) {
-        return delegate.findByAlbumId(albumId);
-    }
-
-    @Override
     public @NotNull Flux<AlbumImageEntity> findAllByAlbumId(long albumId) {
         return delegate.findAllByAlbumId(albumId);
     }
