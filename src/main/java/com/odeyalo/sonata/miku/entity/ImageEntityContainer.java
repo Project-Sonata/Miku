@@ -1,5 +1,6 @@
 package com.odeyalo.sonata.miku.entity;
 
+import com.odeyalo.sonata.miku.support.utils.CollectionUtils;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +18,7 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 @Builder
 public class ImageEntityContainer implements Iterable<AlbumImageEntity> {
-    @Getter(value = AccessLevel.PRIVATE)
+    @Getter(value = AccessLevel.PUBLIC)
     @Singular
     List<AlbumImageEntity> images = new ArrayList<>();
 
@@ -47,6 +48,19 @@ public class ImageEntityContainer implements Iterable<AlbumImageEntity> {
 
     public AlbumImageEntity get(int index) {
         return getImages().get(index);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if ( this == other ) return true;
+        if ( !(other instanceof ImageEntityContainer container) ) return false;
+
+        return CollectionUtils.areEqualDespiteOrder(container.getImages(), this.getImages());
+    }
+
+    @Override
+    public int hashCode() {
+        return getImages().hashCode();
     }
 
     @NotNull
