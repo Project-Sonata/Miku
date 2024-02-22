@@ -40,7 +40,6 @@ public class SimplifiedAlbumEntity implements ArtistsContainerHolder {
     @Setter(value = AccessLevel.NONE)
     List<ArtistEntity> artists = new ArrayList<>();
     @Transient
-    @Setter(value = AccessLevel.NONE)
     @Builder.Default
     ImageEntityContainer imageEntities = ImageEntityContainer.empty();
     // A columns to represent the release date
