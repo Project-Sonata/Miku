@@ -5,6 +5,7 @@ import com.odeyalo.sonata.miku.entity.ArtistEntity;
 import com.odeyalo.sonata.miku.entity.SimplifiedTrackEntity;
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.net.URI;
 import java.util.Collection;
 
 public class SimplifiedTrackEntityFaker {
@@ -13,9 +14,11 @@ public class SimplifiedTrackEntityFaker {
     private final Faker faker = Faker.instance();
 
     public SimplifiedTrackEntityFaker() {
-        name(faker.name().title())
+        builder.name(faker.name().title())
                 .publicId(RandomStringUtils.randomAlphanumeric(22))
-                .durationMs(faker.random().nextLong());
+                .durationMs(faker.random().nextLong())
+                .artist(ArtistEntityFaker.create().get())
+                .streamingUri(URI.create("https://aws.s3.odeyalo.com/sonata/tracks" + RandomStringUtils.randomAlphanumeric(22)));
     }
 
     public static SimplifiedTrackEntityFaker create() {

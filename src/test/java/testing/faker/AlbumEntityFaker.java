@@ -25,7 +25,8 @@ public class AlbumEntityFaker {
                 .albumType(faker.options().option(AlbumType.class))
                 .artist(ArtistEntityFaker.create().get())
                 .totalTracksCount(totalTracksCount += 1)
-                .releaseDate(ReleaseDateFaker.randomReleaseDate().get());
+                .releaseDate(ReleaseDateFaker.randomReleaseDate().get())
+                .imageEntities(ImageEntityContainerFaker.withAmount(3).get());
     }
 
 

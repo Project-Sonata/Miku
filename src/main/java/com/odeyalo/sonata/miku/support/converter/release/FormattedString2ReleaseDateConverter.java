@@ -1,14 +1,14 @@
 package com.odeyalo.sonata.miku.support.converter.release;
 
 import com.odeyalo.sonata.miku.model.ReleaseDate;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.Year;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 
 import static com.odeyalo.sonata.miku.model.ReleaseDate.*;
 import static java.lang.String.format;
@@ -108,24 +108,23 @@ public class FormattedString2ReleaseDateConverter implements ReleaseDateConverte
         }
 
         private void appendZeroIfNecessary(Integer num) {
-            builder.append(num > 10 ? num : "0" + num);
+            builder.append(num >= 10 ? num : "0" + num);
         }
 
     }
 
     private static class ReleaseDateParserSupport {
-        private static final String MONTH_AWARE_RELEASE_DATE_FORMAT_PATTERN = "yyyy-MM";
         private static final String DAY_AWARE_RELEASE_DATE_FORMAT_PATTERN = "yyyy-MM-dd";
-        private static final String YEAR_ONLY_RELEASE_DATE_FORMAT_PATTERN = "yyyy";
+        private static final String MONTH_AWARE_RELEASE_DATE_FORMAT_PATTERN = "yyyy-MM";
 
         public static ReleaseDate parseYearAwareReleaseDate(String releaseDate) {
-            LocalDate localDate = getLocalDate(YEAR_ONLY_RELEASE_DATE_FORMAT_PATTERN, releaseDate);
+            Year year = Year.parse(releaseDate);
 
-            return onlyYear(localDate.getYear());
+            return onlyYear(year.getValue());
         }
 
         public static ReleaseDate parseMonthAwareReleaseDate(String releaseDate) {
-            LocalDate localDate = getLocalDate(MONTH_AWARE_RELEASE_DATE_FORMAT_PATTERN, releaseDate);
+            YearMonth localDate = YearMonth.parse(releaseDate, DateTimeFormatter.ofPattern(MONTH_AWARE_RELEASE_DATE_FORMAT_PATTERN));
 
             return withMonth(localDate.getMonthValue(), localDate.getYear());
         }
@@ -137,13 +136,7 @@ public class FormattedString2ReleaseDateConverter implements ReleaseDateConverte
         }
 
         public static LocalDate getLocalDate(String pattern, String releaseDate) {
-            SimpleDateFormat format = new SimpleDateFormat(pattern);
-            return parseAsLocalDate(releaseDate, format);
-        }
-
-        @SneakyThrows
-        private static LocalDate parseAsLocalDate(String releaseDate, SimpleDateFormat format) {
-            return format.parse(releaseDate).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            return LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern(pattern));
         }
     }
 }

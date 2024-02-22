@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ListenerInvocationCapableEventManagerTest {
 
     @Test
-    void shouldInvokeEventListeners() {
+    void shouldInvokeEventListeners() throws InterruptedException {
         // Given
         SinkEmittingEventSource<SonataEvent> eventSource = new SinkEmittingEventSource<>();
         SpyEventListener spyListener = new SpyEventListener();
@@ -31,6 +31,8 @@ class ListenerInvocationCapableEventManagerTest {
         eventSource.emitNext(event)
                 .as(StepVerifier::create)
                 .verifyComplete();
+        // wait half of second to ensure that listeners have been called
+        Thread.sleep(500);
         // Then
         assertThat(spyListener.hasBeenCalled()).isTrue();
     }

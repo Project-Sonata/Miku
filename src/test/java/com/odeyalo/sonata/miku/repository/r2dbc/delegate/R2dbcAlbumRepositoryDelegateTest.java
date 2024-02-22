@@ -1,13 +1,9 @@
-package com.odeyalo.sonata.miku.repository.support.delegate;
+package com.odeyalo.sonata.miku.repository.r2dbc.delegate;
 
-import com.odeyalo.sonata.miku.entity.AlbumEntity;
-import com.odeyalo.sonata.miku.entity.ArtistEntity;
-import com.odeyalo.sonata.miku.entity.SimplifiedTrackEntity;
+import com.odeyalo.sonata.miku.entity.*;
 import com.odeyalo.sonata.miku.repository.AlbumArtistRepository;
 import com.odeyalo.sonata.miku.repository.RemoveCapable;
 import com.odeyalo.sonata.miku.repository.TrackRepository;
-import com.odeyalo.sonata.miku.repository.r2dbc.delegate.R2dbcAlbumRepositoryDelegate;
-import com.odeyalo.sonata.miku.repository.r2dbc.delegate.R2dbcTrackArtistRepositoryDelegate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -19,6 +15,7 @@ import reactor.test.StepVerifier;
 import testing.asserts.ArtistEntityAssert;
 import testing.faker.AlbumEntityFaker;
 import testing.faker.ArtistEntityFaker;
+import testing.faker.ImageEntityContainerFaker;
 import testing.faker.SimplifiedTrackEntityFaker;
 
 import java.util.List;
@@ -44,9 +41,13 @@ class R2dbcAlbumRepositoryDelegateTest {
     @Autowired
     R2dbcTrackArtistRepositoryDelegate r2dbcTrackArtistRepositoryDelegate;
 
+    @Autowired
+    RemoveCapable<AlbumImageEntity> albumImageEntityRemoveCapable;
+
     @AfterEach
     void tearDown() {
-        albumArtistRepository.deleteAll()
+        albumImageEntityRemoveCapable.deleteAll()
+                .then(albumArtistRepository.deleteAll())
                 .then(r2dbcTrackArtistRepositoryDelegate.deleteAll())
                 .then(trackRepository.deleteAll())
                 .then(r2dbcAlbumRepositoryDelegate.deleteAll())
@@ -209,6 +210,38 @@ class R2dbcAlbumRepositoryDelegateTest {
     void findByNotExistingPublicIdAndReturnNothing() {
         r2dbcAlbumRepositoryDelegate.findByPublicId("not_existing")
                 .as(StepVerifier::create)
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldSaveAlbumWithImages() {
+        AlbumEntity album = AlbumEntityFaker.create().get();
+
+        ImageEntityContainer imageEntities = ImageEntityContainerFaker.withAmount(3).get();
+
+        album.setImages(imageEntities);
+
+        insertAlbumEntities(album);
+
+        r2dbcAlbumRepositoryDelegate.findById(album.getId())
+                .as(StepVerifier::create)
+                .expectNext(album)
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldSaveExactSameAlbumSize() {
+        AlbumEntity album = AlbumEntityFaker.create().get();
+
+        ImageEntityContainer imageEntities = ImageEntityContainerFaker.withAmount(3).get();
+
+        album.setImages(imageEntities);
+
+        insertAlbumEntities(album);
+
+        r2dbcAlbumRepositoryDelegate.findById(album.getId())
+                .as(StepVerifier::create)
+                .expectNextMatches(saved -> saved.getImageEntities().size() == 3)
                 .verifyComplete();
     }
 

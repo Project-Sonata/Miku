@@ -31,6 +31,7 @@ public class FetchAlbumByIdEndpointTest {
     @Autowired
     WebTestClient webTestClient;
 
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     QaOperations qaOperations;
 
@@ -58,6 +59,9 @@ public class FetchAlbumByIdEndpointTest {
                     .get();
 
             existingAlbum = qaOperations.albums().saveAlbum(album);
+            System.out.println("==========");
+            System.out.println(existingAlbum);
+            System.out.println("SAVED ALBUM");
         }
 
         @AfterEach
@@ -151,6 +155,24 @@ public class FetchAlbumByIdEndpointTest {
             ArtistEntity firstArtist = existingAlbum.getArtists().get(0);
 
             forAlbum(responseBody).artists().peekFirst().name().isEqualTo(firstArtist.getName());
+        }
+
+        @Test
+        void shouldReturnCoverImagesForAlbum() {
+            WebTestClient.ResponseSpec responseSpec = fetchExistingAlbum();
+
+            AlbumDto responseBody = responseSpec.expectBody(AlbumDto.class).returnResult().getResponseBody();
+
+            forAlbum(responseBody).images().hasSize(existingAlbum.getImageEntities().size());
+        }
+
+        @Test
+        void shouldReturnCoverImagesSameAsSaved() {
+            WebTestClient.ResponseSpec responseSpec = fetchExistingAlbum();
+
+            AlbumDto responseBody = responseSpec.expectBody(AlbumDto.class).returnResult().getResponseBody();
+
+            forAlbum(responseBody).images().hasElements(existingAlbum.getImageEntities());
         }
 
         @Test

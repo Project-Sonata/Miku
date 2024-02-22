@@ -26,6 +26,7 @@ public class QaController {
     private final SimplifiedAlbumRepository simplifiedAlbumRepository;
     private final R2dbcAlbumRepositoryDelegate albumRepository;
     private final AlbumArtistRepository albumArtistRepository;
+    private final AlbumImageRepository albumImageRepository;
     private final TransactionalOperator transactionalOperator;
 
     @PostMapping("/track")
@@ -39,6 +40,7 @@ public class QaController {
     @DeleteMapping("/track/clear")
     public Mono<Void> clearTracks() {
         return trackArtistRepository.deleteAll()
+                .then(albumImageRepository.deleteAll())
                 .then(albumArtistRepository.deleteAll())
                 .then(trackRepository.deleteAll())
                 .then(simplifiedAlbumRepository.deleteAll())
@@ -59,6 +61,7 @@ public class QaController {
     @DeleteMapping("/album/clear")
     public Mono<Void> clearAlbums() {
         return trackArtistRepository.deleteAll()
+                .then(albumImageRepository.deleteAll())
                 .then(albumArtistRepository.deleteAll())
                 .then(trackRepository.deleteAll())
                 .then(artistRepository.deleteAll())

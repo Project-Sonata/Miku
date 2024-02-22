@@ -53,6 +53,15 @@ class FormattedString2ReleaseDateConverterTest {
     }
 
     @Test
+    void shouldEncodeReleaseDateAndShouldNotAddZeroIfMonthIsEqualToTen() {
+        ReleaseDate expected = ReleaseDate.withDay(5, 10, 2012);
+
+        String actual = converter.encodeReleaseDate(expected);
+
+        assertThat(actual).isEqualTo("2012-10-05");
+    }
+
+    @Test
     void shouldEncodeReleaseDateAndAddZeroToMonthIfDateIsLowerThan10() {
         ReleaseDate expected = ReleaseDate.withDay(3, 9, 2012);
 
@@ -68,5 +77,14 @@ class FormattedString2ReleaseDateConverterTest {
         String actual = converter.encodeReleaseDate(expected);
 
         assertThat(actual).isEqualTo("2012-12-30");
+    }
+
+    @Test
+    void shouldDecodeString() {
+        String str = "1542-08-21";
+        ReleaseDate releaseDate = converter.decodeReleaseDate(ReleaseDateInfo.of(str, ReleaseDate.Precision.DAY));
+
+        assertThat(releaseDate).isEqualTo(ReleaseDate.withDay(21, 8, 1542));
+//        'ReleaseDate(day=31, month=8, year=1542, precision=DAY)'
     }
 }
