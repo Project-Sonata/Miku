@@ -229,6 +229,22 @@ class R2dbcAlbumRepositoryDelegateTest {
                 .verifyComplete();
     }
 
+    @Test
+    void shouldSaveExactSameAlbumSize() {
+        AlbumEntity album = AlbumEntityFaker.create().get();
+
+        ImageEntityContainer imageEntities = ImageEntityContainerFaker.withAmount(3).get();
+
+        album.setImages(imageEntities);
+
+        insertAlbumEntities(album);
+
+        r2dbcAlbumRepositoryDelegate.findById(album.getId())
+                .as(StepVerifier::create)
+                .expectNextMatches(saved -> saved.getImageEntities().size() == 3)
+                .verifyComplete();
+    }
+
     private static boolean expectArtistToBePresentInTrack(ArtistEntity artist, AlbumEntity foundAlbum) {
         SimplifiedTrackEntity firstTrack = foundAlbum.getTracks().get(0);
 
