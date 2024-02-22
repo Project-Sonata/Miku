@@ -21,4 +21,34 @@ class CollectionUtilsTest {
         boolean result = CollectionUtils.hasElements(emptyList());
         assertThat(result).isFalse();
     }
+
+    @Test
+    void shouldReturnTrueForEqualCollectionsDespiteOrder() {
+        List<Integer> first = List.of(1, 2, 3);
+        List<Integer> second = List.of(3, 2, 1);
+
+        boolean result = CollectionUtils.areEqualDespiteOrder(first, second);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseForNotEqualCollectionsDespiteOrder() {
+        List<Integer> first = List.of(1, 2, 3);
+        List<Integer> second = List.of(4, 2, 1);
+
+        boolean result = CollectionUtils.areEqualDespiteOrder(first, second);
+
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void shouldReturnFalseForNotEqualCollectionsWithDifferentSizeDespiteOrder() {
+        List<Integer> first = List.of(1, 2, 3);
+        List<Integer> second = List.of(4, 3, 2, 1);
+
+        boolean result = CollectionUtils.areEqualDespiteOrder(first, second);
+
+        assertThat(result).isFalse();
+    }
 }
