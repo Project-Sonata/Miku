@@ -10,7 +10,7 @@ import reactor.core.scheduler.Schedulers;
  * Delegate the messages from the kafka to event source
  */
 @Component
-public class KafkaMessageDelegator<T extends SonataEvent> {
+public final class KafkaMessageDelegator<T extends SonataEvent> {
     private final KafkaConsumer<T> messageProvider;
     private final EmittingEventSource<T> sourceToPush;
 

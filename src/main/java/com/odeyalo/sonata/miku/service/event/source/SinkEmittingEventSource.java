@@ -12,7 +12,7 @@ import reactor.core.publisher.Sinks;
  * @param <T> - type of the event
  */
 @Component
-public class SinkEmittingEventSource<T extends SonataEvent> implements EmittingEventSource<T>, AutoCloseable {
+public final class SinkEmittingEventSource<T extends SonataEvent> implements EmittingEventSource<T>, AutoCloseable {
     private final Sinks.Many<T> publisher = Sinks.many().multicast().onBackpressureBuffer();
 
     @Override
