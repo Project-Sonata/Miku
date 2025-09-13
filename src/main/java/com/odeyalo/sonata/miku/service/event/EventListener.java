@@ -1,6 +1,7 @@
 package com.odeyalo.sonata.miku.service.event;
 
 import com.odeyalo.sonata.suite.brokers.events.SonataEvent;
+import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
 /**
@@ -14,13 +15,14 @@ public interface EventListener {
      * @return - empty mono after execution.
      * Any exception will be ignored and must be handled in listener
      */
-    Mono<Void> handleEvent(SonataEvent sonataEvent);
+    @NotNull
+    Mono<Void> handleEvent(@NotNull SonataEvent sonataEvent);
 
     /**
-     * Filter function that uses to filter incoming events
+     * Filter function that used to filter incoming events
      *
      * @param event - event to filter
      * @return - true if this event listener can handle this event, false otherwise
      */
-    boolean supports(SonataEvent event);
+    boolean supports(@NotNull SonataEvent event);
 }

@@ -5,6 +5,7 @@ import com.odeyalo.sonata.miku.service.AlbumSaver;
 import com.odeyalo.sonata.miku.support.converter.external.AlbumEntitySuiteConverter;
 import com.odeyalo.sonata.suite.brokers.events.SonataEvent;
 import com.odeyalo.sonata.suite.brokers.events.album.AlbumUploadingFullyFinishedEvent;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -23,7 +24,8 @@ public class AlbumUploadingFullyFinishedEventListener implements EventListener {
     }
 
     @Override
-    public Mono<Void> handleEvent(SonataEvent sonataEvent) {
+    @NotNull
+    public Mono<Void> handleEvent(@NotNull final SonataEvent sonataEvent) {
         AlbumEntity albumEntity = convertToAlbumEntity(sonataEvent);
 
         return albumSaver.saveAlbum(albumEntity).then();
@@ -37,7 +39,7 @@ public class AlbumUploadingFullyFinishedEventListener implements EventListener {
     }
 
     @Override
-    public boolean supports(SonataEvent event) {
+    public boolean supports(@NotNull final SonataEvent event) {
         return event instanceof AlbumUploadingFullyFinishedEvent;
     }
 }
